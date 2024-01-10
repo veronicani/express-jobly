@@ -20,3 +20,12 @@ function sqlForPartialUpdate(dataToUpdate, jsToSql) {
 }
 
 module.exports = { sqlForPartialUpdate };
+
+//Walkthrough of sqlForPartialUpdate
+// data {firstName: "Bob", 'lastName: "Laster", 'isAdmin: true}
+// keys = [firstName, lastName, isAdmin] (these are colNames), length = 3
+// if keys.length = 0 -> Err
+//cols = ["first_name" OR firstName" = $1, "last_name" OR lastName = $2]
+//returns
+//{setCols: "first_name = $1, last_name = $2"
+// values: ["Bob", "Laster", true]
