@@ -1,7 +1,8 @@
 "use strict";
 
-const { sqlForPartialUpdate }= require("./sql");
+const { sqlForPartialUpdate } = require("./sql");
 const { BadRequestError } = require("../expressError");
+const { errorMonitor } = require("supertest/lib/test");
 
 // things to test for
 // works with partial that is valid
@@ -21,11 +22,35 @@ describe("sqlForPartialUpdate", function () {
         lastName: "last_name",
       });
 
-    console.log("***setCols:", setCols);
-    console.log("***values:", values);
+    // console.log("***setCols:", setCols);
+    // console.log("***values:", values);
 
     expect(setCols).toEqual('"first_name"=$1, "last_name"=$2');
     expect(values).toEqual(["Bob", "Laster"]);
+  });
+
+
+  test("bad request with no data", function () {
+
+    expect(() => sqlForPartialUpdate({},
+      {
+        firstName: "first_name",
+        lastName: "last_name",
+      })).toThrow(BadRequestError);
+
+    // try {
+    //   const { setCols, values } = sqlForPartialUpdate({},
+    //     {
+    //       firstName: "first_name",
+    //       lastName: "last_name",
+    //     });
+
+    //   console.log("***setCols:", setCols);
+    //   console.log("***values:", values);
+    // } catch (err){
+
+    // }
+
   });
 
   // test("works: no header", function () {
