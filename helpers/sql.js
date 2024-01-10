@@ -29,3 +29,4 @@ module.exports = { sqlForPartialUpdate };
 //returns
 //{setCols: "first_name = $1, last_name = $2"
 // values: ["Bob", "Laster", true]
+
