@@ -50,9 +50,32 @@ class Company {
     return company;
   }
 
-  /** TODO: docstring! 
-   * 
+  /** Receives a query string object and returns an object with 2
+   * keys-value pairs:
+   * a generated WHERE SQL clause based on the keys from the query object
+   * and an array of values mapping to the query values.
+   *
+   * This will be used to filter the search in the findAll() method for
+   * companies if search queries are passed in.
+   *
+   * Query must contain at least one of the following:
+   * nameLike, minEmployees, maxEmployees.
+   *
+   * Receives an obj like:
+   *  {
+   *    nameLike: "C"
+   *    minEmployees: "2"
+   * }
+   *
+   * Returns obj like:
+   *
+   * {
+   *    whereClause: "WHERE name ILIKE $1 AND num_employees >= $2",
+   *    values: ["%C%", 2]
+   * }
+   *
   */
+
   static _makeWhereClause(query) {
 
     if (query.minEmployees && query.maxEmployees) {
@@ -64,7 +87,7 @@ class Company {
 
     const whereExps = [];
     const values = [];
-    
+
     if (query.nameLike) {
       values.push(`%${query.nameLike}%`);
       whereExps.push(`name ILIKE $${values.length}`);
@@ -120,7 +143,7 @@ class Company {
         ${whereClause}
         ORDER BY name`;
 
-    const companiesRes = await db.query(baseQuery, values); 
+    const companiesRes = await db.query(baseQuery, values);
 
     return companiesRes.rows;
 
