@@ -85,6 +85,9 @@ describe("sqlForSearch", function () {
 
   });
 
+  // //TODO: test for
+  //   Expected: "WHERE name ILIKE '%C%' AND num_employees >= 2"
+  //   Received: "WHERE name ILIKE '%C%' num_employees >= 2"
 
   // test("bad request with no data", function () {
 
