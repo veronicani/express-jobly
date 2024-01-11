@@ -55,86 +55,12 @@ class Company {
    * Returns [{ handle, name, description, numEmployees, logoUrl }, ...]
    * */
 
-  /** pseudo query
-   * make 2 separate queries: if data is empty, proceed with normal query
-   * if data is not empty, proceed with formatted WHERE clause
-   *
-   *
-   * SELECT handle, name, description, num_employees AS "numEmployees", logo_url AS "logoUrl"
-   * FROM companies
-   * WHERE name ILIKE $1 AND num_employees > $2 AND num_employees < $3,
-   * [$1, $2, $3] --> ["App", 2, ,200]
-   *
-   *
-   * SELECT handle, name....
-   * FROM companies
-   * WHERE name ILIKE $1
-   *
-   * [$1] --> ["App"]
-   *
-   *
-   * SELECT handle, name...
-   * FROM companies
-   * WHERE num_employees < $1
-   * [$1] --> [200]
-   *
-   *
-   * const basequery = 'SELECT handle,
-               name,
-               description,
-               num_employees AS "numEmployees",
-               logo_url      AS "logoUrl"
-        FROM companies'
-
-    const filterquery = searchForQuery(data);
-
-    if filterquery !== ""
-    ...concatenate basequery + filterquery + order by
-   */
-  static _makeWhereClause(query) {
-    // const { nameLike: query.nameLike, minEmployees: query.minEmployees, maxEmployees: query.maxEmployees } = {query};
-    console.log('_makeWhereClause standalone');
-    
-    if (query.minEmployees && query.maxEmployees) {
-      if (Number(query.minEmployees) > Number(query.maxEmployees)) {
-        throw new BadRequestError("Min employees cannot be greater than max employees");
-      }
-    }
-
-    const whereExps = [];
-    const values = [];
-    //if there is a nameLike
-    if (query.nameLike) {
-      values.push(`'%${query.nameLike}%'`); //['C']
-      whereExps.push(`name ILIKE $${values.length}`); // [name ILIKE $1]
-    }
-
-    if (query.minEmployees) {
-      values.push(Number(query.minEmployees));
-      whereExps.push(`num_employees >= $${values.length}`);
-    }
-
-    if (query.maxEmployees) {
-      values.push(Number(query.maxEmployees));
-      whereExps.push(`num_employees <= $${values.length}`);
-    }
-
-    if (whereExps.length === 0) {
-      return "";
-    }
-
-    return {
-      whereClause: 'WHERE ' + (whereExps.join(' AND ')),
-      values: values
-    }
-  }
-
   static async findAll(query) {
 
     function _makeWhereClause(query) {
       // const { nameLike: query.nameLike, minEmployees: query.minEmployees, maxEmployees: query.maxEmployees } = {query};
+      console.log('_makeWhereClause standalone');
 
-      //if minEmployees > maxEmployees, throw BadRequestError
       if (query.minEmployees && query.maxEmployees) {
         if (Number(query.minEmployees) > Number(query.maxEmployees)) {
           throw new BadRequestError("Min employees cannot be greater than max employees");
@@ -145,18 +71,18 @@ class Company {
       const values = [];
       //if there is a nameLike
       if (query.nameLike) {
-        values.push(query.nameLike); //['C']
+        values.push(`'%${query.nameLike}%'`); //['C']
         whereExps.push(`name ILIKE $${values.length}`); // [name ILIKE $1]
+      }
+
+      if (query.minEmployees) {
+        values.push(Number(query.minEmployees));
+        whereExps.push(`num_employees >= $${values.length}`);
       }
 
       if (query.maxEmployees) {
         values.push(Number(query.maxEmployees));
         whereExps.push(`num_employees <= $${values.length}`);
-      }
-      //TODO: implement minEmployees
-      if (query.minEmployees) {
-        values.push(query.minEmployees);
-        whereExps.push(`num_employees >= $${values.length}`);
       }
 
       if (whereExps.length === 0) {
@@ -164,15 +90,14 @@ class Company {
       }
 
       return {
-        whereClause: ' WHERE ' + (whereExps.join(' AND ')),
-        queryParams: values
-      }
+        whereClause: 'WHERE ' + (whereExps.join(' AND ')),
+        values: values
+      };
     }
 
-    //const baseQuery = "Select...From companies";
-    //const { whereClause, queryParams } = _makeWhereClause(query);
-    //const companiesRes = await db.query(baseQuery + whereClause + "Order BY name", values);
-    if (_makeWhereClause(query) === "") {
+    console.log("***query:", query);
+
+    if (query === undefined) {
       const companiesRes = await db.query(`
         SELECT handle,
                name,
@@ -184,8 +109,9 @@ class Company {
       return companiesRes.rows;
     }
 
-    const { whereClause, queryParams } = _makeWhereClause(query);
-    const companiesRes = await db.query(`
+    const { whereClause, values } = _makeWhereClause(query);
+
+    const baseQuery = `
         SELECT handle,
                name,
                description,
@@ -193,9 +119,22 @@ class Company {
                logo_url      AS "logoUrl"
         FROM companies
         ${whereClause}
-        ORDER BY name`, queryParams);
+        ORDER BY name`;
 
-    return companiesRes.rows;
+    console.log("baseQuery:", baseQuery);
+    console.log("values:", values);
+
+    // const companiesRes = await db.query(`
+    //         SELECT handle,
+    //                name,
+    //                description,
+    //                num_employees AS "numEmployees",
+    //                logo_url      AS "logoUrl"
+    //         FROM companies
+    //         ${whereClause}
+    //         ORDER BY name`, values);
+
+    // return companiesRes.rows;
 
   }
 
