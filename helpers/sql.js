@@ -73,7 +73,8 @@ function sqlForPartialUpdate(dataToUpdate, jsToSql) {
  *    }
  *
  */
-
+//TODO: change function name, maybe this need to change location > models/companies.js?
+//TODO: change test locations > models/company.test.js ?
 function sqlForSearch(data, jsToSql) {
   //check if minEmployees > maxEmployees. If true, throw error
   if (data.minEmployees && data.maxEmployees) {
