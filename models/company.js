@@ -50,53 +50,52 @@ class Company {
     return company;
   }
 
+  /** TODO: docstring! 
+   * 
+  */
+  static _makeWhereClause(query) {
+
+    if (query.minEmployees && query.maxEmployees) {
+      if (Number(query.minEmployees) > Number(query.maxEmployees)) {
+        throw new BadRequestError(
+          "Min employees cannot be greater than max employees");
+      }
+    }
+
+    const whereExps = [];
+    const values = [];
+    
+    if (query.nameLike) {
+      values.push(`%${query.nameLike}%`);
+      whereExps.push(`name ILIKE $${values.length}`);
+    }
+
+    if (query.minEmployees) {
+      values.push(Number(query.minEmployees));
+      whereExps.push(`num_employees >= $${values.length}`);
+    }
+
+    if (query.maxEmployees) {
+      values.push(Number(query.maxEmployees));
+      whereExps.push(`num_employees <= $${values.length}`);
+    }
+
+    if (whereExps.length === 0) {
+      return "";
+    }
+
+    return {
+      whereClause: 'WHERE ' + (whereExps.join(' AND ')),
+      values: values
+    };
+  }
+
   /** Find all companies.
    *
    * Returns [{ handle, name, description, numEmployees, logoUrl }, ...]
    * */
 
   static async findAll(query) {
-
-    function _makeWhereClause(query) {
-      // const { nameLike: query.nameLike, minEmployees: query.minEmployees, maxEmployees: query.maxEmployees } = {query};
-      console.log('_makeWhereClause standalone');
-
-      if (query.minEmployees && query.maxEmployees) {
-        if (Number(query.minEmployees) > Number(query.maxEmployees)) {
-          throw new BadRequestError("Min employees cannot be greater than max employees");
-        }
-      }
-
-      const whereExps = [];
-      const values = [];
-      //if there is a nameLike
-      if (query.nameLike) {
-        values.push(`'%${query.nameLike}%'`); //['C']
-        whereExps.push(`name ILIKE $${values.length}`); // [name ILIKE $1]
-      }
-
-      if (query.minEmployees) {
-        values.push(Number(query.minEmployees));
-        whereExps.push(`num_employees >= $${values.length}`);
-      }
-
-      if (query.maxEmployees) {
-        values.push(Number(query.maxEmployees));
-        whereExps.push(`num_employees <= $${values.length}`);
-      }
-
-      if (whereExps.length === 0) {
-        return "";
-      }
-
-      return {
-        whereClause: 'WHERE ' + (whereExps.join(' AND ')),
-        values: values
-      };
-    }
-
-    console.log("***query:", query);
-
     if (query === undefined) {
       const companiesRes = await db.query(`
         SELECT handle,
@@ -109,7 +108,7 @@ class Company {
       return companiesRes.rows;
     }
 
-    const { whereClause, values } = _makeWhereClause(query);
+    const { whereClause, values } = Company._makeWhereClause(query);
 
     const baseQuery = `
         SELECT handle,
@@ -121,20 +120,9 @@ class Company {
         ${whereClause}
         ORDER BY name`;
 
-    console.log("baseQuery:", baseQuery);
-    console.log("values:", values);
+    const companiesRes = await db.query(baseQuery, values); 
 
-    // const companiesRes = await db.query(`
-    //         SELECT handle,
-    //                name,
-    //                description,
-    //                num_employees AS "numEmployees",
-    //                logo_url      AS "logoUrl"
-    //         FROM companies
-    //         ${whereClause}
-    //         ORDER BY name`, values);
-
-    // return companiesRes.rows;
+    return companiesRes.rows;
 
   }
 
