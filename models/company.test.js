@@ -86,11 +86,7 @@ describe("findAll", function () {
     ]);
   });
 
-  // TODO:
 
-  // // filter by partial name
-  // // test for 400 error if minEmployees > maxEmployees
-  // // filter by minEmployees and full name
   test("works: filter by company name", async function () {
     let companies = await Company.findAll({"nameLike": "C"});
     expect(companies).toEqual([
@@ -135,6 +131,7 @@ describe("findAll", function () {
       },
     ]);
   });
+
   test("bad request with min employees greater than max employees", async function () {
     try {
       await Company.findAll(
@@ -149,7 +146,6 @@ describe("findAll", function () {
     }
   });
 });
-
 
 
 /************************************** get */

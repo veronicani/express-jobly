@@ -55,7 +55,13 @@ module.exports = { sqlForPartialUpdate };
 //{setCols: "first_name = $1, last_name = $2"
 // values: ["Bob", "Laster", true]
 
-
+/**
+ *
+ *
+ *
+ *
+ *
+ */
 function sqlForSearch(dataToSearch, jsToSql) {
   const keys = Object.keys(dataToSearch);
   //TODO: implement?
