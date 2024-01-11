@@ -38,12 +38,12 @@ class Company {
                     description,
                     num_employees AS "numEmployees",
                     logo_url AS "logoUrl"`, [
-          handle,
-          name,
-          description,
-          numEmployees,
-          logoUrl,
-        ],
+      handle,
+      name,
+      description,
+      numEmployees,
+      logoUrl,
+    ],
     );
     const company = result.rows[0];
 
@@ -93,32 +93,50 @@ class Company {
    */
 
   static async findAll(query) {
+
     function _makeWhereClause(query) {
-      if (data.minEmployees && data.maxEmployees) {
-        if (+data.minEmployees > data.maxEmployees) throw new BadRequestError("");
+      // const { nameLike: query.nameLike, minEmployees: query.minEmployees, maxEmployees: query.maxEmployees } = {query};
+
+      //if minEmployees > maxEmployees, throw BadRequestError
+      if (query.minEmployees && query.maxEmployees) {
+        if (Number(query.minEmployees) > Number(query.maxEmployees)) {
+          throw new BadRequestError("Min employees cannot be greater than max employees");
+        }
       }
-      const { nameLike, minEmployees, maxEmployees } = query;
+
       const whereExps = [];
       const values = [];
-      //if there is a nameLike 
-      if (nameLike) {
-        values.push(nameLike); //['C'] 
+      //if there is a nameLike
+      if (query.nameLike) {
+        values.push(query.nameLike); //['C']
         whereExps.push(`name ILIKE $${values.length}`); // [name ILIKE $1]
       }
 
-      if (maxEmployees) {
-        values.push(Number(maxEmployees));
+      if (query.maxEmployees) {
+        values.push(Number(query.maxEmployees));
         whereExps.push(`num_employees <= $${values.length}`);
       }
       //TODO: implement minEmployees
-      if (maxEmployees) {
-        values.push(maxEmployees);
-        whereExps.push(`num_employees <= $${values.length}`);
+      if (query.minEmployees) {
+        values.push(query.minEmployees);
+        whereExps.push(`num_employees >= $${values.length}`);
       }
 
-      //return 'WHERE' += whereClause.join('AND');
+      if (whereExps.length === 0) {
+        return "";
+      }
+
+      return {
+        whereClause: ' WHERE ' + (whereExps.join(' AND ')),
+        queryParams: values
+      }
     }
-    const companiesRes = await db.query(`
+
+    //const baseQuery = "Select...From companies";
+    //const { whereClause, queryParams } = _makeWhereClause(query);
+    //const companiesRes = await db.query(baseQuery + whereClause + "Order BY name", values);
+    if (_makeWhereClause(query) === "") {
+      const companiesRes = await db.query(`
         SELECT handle,
                name,
                description,
@@ -126,7 +144,22 @@ class Company {
                logo_url      AS "logoUrl"
         FROM companies
         ORDER BY name`);
+      return companiesRes.rows;
+    }
+
+    const { whereClause, queryParams } = _makeWhereClause(query);
+    const companiesRes = await db.query(`
+        SELECT handle,
+               name,
+               description,
+               num_employees AS "numEmployees",
+               logo_url      AS "logoUrl"
+        FROM companies
+        ${whereClause}
+        ORDER BY name`, queryParams);
+
     return companiesRes.rows;
+
   }
 
   /** Given a company handle, return data about company.
@@ -168,11 +201,11 @@ class Company {
 
   static async update(handle, data) {
     const { setCols, values } = sqlForPartialUpdate(
-        data,
-        {
-          numEmployees: "num_employees",
-          logoUrl: "logo_url",
-        });
+      data,
+      {
+        numEmployees: "num_employees",
+        logoUrl: "logo_url",
+      });
     const handleVarIdx = "$" + (values.length + 1);
 
     const querySql = `

@@ -3,6 +3,7 @@
 const db = require("../db.js");
 const { BadRequestError, NotFoundError } = require("../expressError");
 const Company = require("./company.js");
+
 const {
   commonBeforeAll,
   commonBeforeEach,
@@ -59,9 +60,10 @@ describe("create", function () {
 /************************************** _makeWhereClause */
 
 describe("_makeWhereClause", function () {
-  test("works with nameLike and minEmployees", function () {
+  test("works with nameLike and minEmployees", async function () {
     const query = {"nameLike": "C", "minEmployees": "3"}
-    const { whereClause, values } = _makeWhereClause(query);
+    const { whereClause, values } = await Company.findAll(query)._makeWhereClause(query);
+    // FIXME:
 
     expect(whereClause).toEqual("WHERE name ILIKE $1 AND num_employees >= $2");
     expect(values).toEqual(["'%C%'", 2]);
@@ -69,7 +71,7 @@ describe("_makeWhereClause", function () {
 
   test("works with minEmployees and maxEmployees", function () {
     const query = {"minEmployees": "2", "maxEmployees": "100"}
-    const { whereClause, values } = _makeWhereClause(query);
+    const { whereClause, values } = Company._makeWhereClause(query);
 
     expect(whereClause).toEqual("WHERE num_employees >= $1 AND num_employees <= $2");
     expect(values).toEqual([2, 100]);
