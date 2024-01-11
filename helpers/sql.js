@@ -58,5 +58,5 @@ module.exports = { sqlForPartialUpdate };
 
 function sqlForSearch(dataToSearch, jsToSql) {
   const keys = Object.keys(dataToSearch);
-  if
+  //TODO: implement?
 }

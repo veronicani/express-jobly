@@ -91,10 +91,8 @@ describe("findAll", function () {
   // // filter by partial name
   // // test for 400 error if minEmployees > maxEmployees
   // // filter by minEmployees and full name
-  test("works: filter by company name", async function () {
-    let companies = await Company.findAll({
-      "name": "C"
-    });
+  test("works: filter by matching company name", async function () {
+    let companies = await Company.findAll({"nameLike": "C"});
     expect(companies).toEqual([
       {
         handle: "c1",
@@ -120,25 +118,14 @@ describe("findAll", function () {
     ]);
   });
 
-  test("works: filter by company name", async function () {
-    let companies = await Company.findAll({
-      "name": "C"
-    });
+  test("works: filter by company name and minimum employees", async function () {
+    let companies = await Company.findAll(
+      {
+        "nameLike": "C",
+        "minEmployees": 3,
+      }
+    );
     expect(companies).toEqual([
-      {
-        handle: "c1",
-        name: "C1",
-        description: "Desc1",
-        numEmployees: 1,
-        logoUrl: "http://c1.img",
-      },
-      {
-        handle: "c2",
-        name: "C2",
-        description: "Desc2",
-        numEmployees: 2,
-        logoUrl: "http://c2.img",
-      },
       {
         handle: "c3",
         name: "C3",
@@ -148,14 +135,20 @@ describe("findAll", function () {
       },
     ]);
   });
-
-
-
-
-
-
+  test("bad request with min employees greater than max employees", async function () {
+    try {
+      await Company.findAll(
+        {
+          "minEmployees": 7,
+          "maxEmployees": 3
+        }
+      );
+      throw new Error("fail test, you shouldn't get here");
+    } catch (err) {
+      expect(err instanceof BadRequestError).toBeTruthy();
+    }
+  });
 });
-
 
 
 
