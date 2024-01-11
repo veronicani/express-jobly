@@ -56,6 +56,41 @@ describe("create", function () {
   });
 });
 
+/************************************** _makeWhereClause */
+
+describe("_makeWhereClause", function () {
+  test("works with nameLike and minEmployees", function () {
+    const query = {"nameLike": "C", "minEmployees": 2}
+    const { whereClause, values } = _makeWhereClause(query);
+
+    expect(whereClause).toEqual("WHERE name ILIKE $1 AND num_employees >= $2");
+    expect(values).toEqual(["'%C%'", 2]);
+  });
+
+  test("works with minEmployees and maxEmployees", function () {
+    const query = {"minEmployees": 2, "maxEmployees": 100}
+    const { whereClause, values } = _makeWhereClause(query);
+
+    expect(whereClause).toEqual("WHERE num_employees >= $1 AND num_employees <= $2");
+    expect(values).toEqual([2, 100]);
+
+  });
+
+  test("works with nameLike", function () {
+    const query = {"nameLike": "C"}
+    const { whereClause, values } = _makeWhereClause(query);
+
+    expect(whereClause).toEqual("WHERE name ILIKE $1");
+    expect(values).toEqual(["'%C%'"]);
+
+  });
+
+  test("bad request with minEmployees greater than maxEmployees", function () {
+    const query = {"minEmployees": 100, "maxEmployees": 2}
+    expect(() => _makeWhereClause(query)).toThrow(BadRequestError);
+  });
+});
+
 /************************************** findAll */
 
 describe("findAll", function () {
