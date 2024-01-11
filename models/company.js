@@ -91,6 +91,43 @@ class Company {
     if filterquery !== ""
     ...concatenate basequery + filterquery + order by
    */
+  static _makeWhereClause(query) {
+    // const { nameLike: query.nameLike, minEmployees: query.minEmployees, maxEmployees: query.maxEmployees } = {query};
+    console.log('_makeWhereClause standalone');
+    
+    if (query.minEmployees && query.maxEmployees) {
+      if (Number(query.minEmployees) > Number(query.maxEmployees)) {
+        throw new BadRequestError("Min employees cannot be greater than max employees");
+      }
+    }
+
+    const whereExps = [];
+    const values = [];
+    //if there is a nameLike
+    if (query.nameLike) {
+      values.push(`'%${query.nameLike}%'`); //['C']
+      whereExps.push(`name ILIKE $${values.length}`); // [name ILIKE $1]
+    }
+
+    if (query.minEmployees) {
+      values.push(Number(query.minEmployees));
+      whereExps.push(`num_employees >= $${values.length}`);
+    }
+
+    if (query.maxEmployees) {
+      values.push(Number(query.maxEmployees));
+      whereExps.push(`num_employees <= $${values.length}`);
+    }
+
+    if (whereExps.length === 0) {
+      return "";
+    }
+
+    return {
+      whereClause: 'WHERE ' + (whereExps.join(' AND ')),
+      values: values
+    }
+  }
 
   static async findAll(query) {
 
