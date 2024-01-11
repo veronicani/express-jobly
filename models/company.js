@@ -78,6 +78,18 @@ class Company {
 
   static _makeWhereClause(query) {
 
+    if(query.minEmployees){
+      if(isNaN(Number(query.minEmployees))){
+        throw new BadRequestError("Invalid min value");
+      }
+    }
+
+    if(query.maxEmployees){
+      if(isNaN(Number(query.maxEmployees))){
+        throw new BadRequestError("Invalid max value");
+      }
+    }
+
     if (query.minEmployees && query.maxEmployees) {
       if (Number(query.minEmployees) > Number(query.maxEmployees)) {
         throw new BadRequestError(

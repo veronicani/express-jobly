@@ -90,6 +90,11 @@ describe("_makeWhereClause", function () {
     const query = {"minEmployees": "100", "maxEmployees": "2"}
     expect(() => Company._makeWhereClause(query)).toThrow(BadRequestError);
   });
+
+  test("bad request with invalid inputs", function () {
+    const query = {"minEmployees": "cat"}
+    expect(() => Company._makeWhereClause(query)).toThrow(BadRequestError);
+  });
 });
 
 /************************************** findAll */
