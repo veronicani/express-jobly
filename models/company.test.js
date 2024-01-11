@@ -60,7 +60,7 @@ describe("create", function () {
 
 describe("_makeWhereClause", function () {
   test("works with nameLike and minEmployees", function () {
-    const query = {"nameLike": "C", "minEmployees": 2}
+    const query = {"nameLike": "C", "minEmployees": "3"}
     const { whereClause, values } = _makeWhereClause(query);
 
     expect(whereClause).toEqual("WHERE name ILIKE $1 AND num_employees >= $2");
@@ -68,7 +68,7 @@ describe("_makeWhereClause", function () {
   });
 
   test("works with minEmployees and maxEmployees", function () {
-    const query = {"minEmployees": 2, "maxEmployees": 100}
+    const query = {"minEmployees": "2", "maxEmployees": "100"}
     const { whereClause, values } = _makeWhereClause(query);
 
     expect(whereClause).toEqual("WHERE num_employees >= $1 AND num_employees <= $2");
@@ -86,7 +86,7 @@ describe("_makeWhereClause", function () {
   });
 
   test("bad request with minEmployees greater than maxEmployees", function () {
-    const query = {"minEmployees": 100, "maxEmployees": 2}
+    const query = {"minEmployees": "100", "maxEmployees": "2"}
     expect(() => _makeWhereClause(query)).toThrow(BadRequestError);
   });
 });
