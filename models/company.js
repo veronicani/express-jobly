@@ -144,6 +144,7 @@ class Company {
         ORDER BY name`;
 
     const companiesRes = await db.query(baseQuery, values);
+    if (companiesRes.rows.length === 0) throw new NotFoundError("Company not found");
 
     return companiesRes.rows;
 
