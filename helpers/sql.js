@@ -50,7 +50,7 @@ function sqlForPartialUpdate(dataToUpdate, jsToSql) {
 }
 
 
-module.exports = { sqlForPartialUpdate, sqlForSearch };
+module.exports = { sqlForPartialUpdate };
 
 
 
