@@ -62,15 +62,15 @@ describe("create", function () {
 describe("_makeWhereClause", function () {
   test("works with nameLike and minEmployees", function () {
     const query = {"nameLike": "C", "minEmployees": "3"}
-    const { whereClause, values } = _makeWhereClause(query);
+    const { whereClause, values } = Company._makeWhereClause(query);
 
     expect(whereClause).toEqual("WHERE name ILIKE $1 AND num_employees >= $2");
-    expect(values).toEqual(["'%C%'", 3]);
+    expect(values).toEqual(["%C%", 3]);
   });
 
   test("works with minEmployees and maxEmployees", function () {
     const query = {"minEmployees": "2", "maxEmployees": "100"}
-    const { whereClause, values } = _makeWhereClause(query);
+    const { whereClause, values } = Company._makeWhereClause(query);
 
     expect(whereClause).toEqual("WHERE num_employees >= $1 AND num_employees <= $2");
     expect(values).toEqual([2, 100]);
@@ -79,10 +79,10 @@ describe("_makeWhereClause", function () {
 
   test("works with nameLike", function () {
     const query = {"nameLike": "C"}
-    const { whereClause, values } = _makeWhereClause(query);
+    const { whereClause, values } = Company._makeWhereClause(query);
 
     expect(whereClause).toEqual("WHERE name ILIKE $1");
-    expect(values).toEqual(["'%C%'"]);
+    expect(values).toEqual(["%C%"]);
 
   });
 
