@@ -2,7 +2,32 @@
 
 const { BadRequestError } = require("../expressError");
 
-//TODO: THIS NEEDS SOME GREAT DOCUMENTATION.
+/** Generates an object containing
+ *    setCols: a string of col names mapped to their parameterized values.
+ *    values: an array of values from dataToUpdate.
+ *
+ * If dataToUpdate is empty, it throws an error.
+ *
+ * Receives:
+ *  DataToUpdate Example:
+ *     {
+ *       firstName: "Bob",
+ *       lastName: "Laster"
+ *    }
+ *
+ *  jsToSQL:
+ *     {
+ *      firstName: "first_name",
+ *      lastName: "last_name",
+ *      isAdmin: "is_admin",
+ *    }
+ *
+ * Returns an object like:
+ *  {
+ *    setCols: '"first_name"=$1, "last_name"=$2, ...'
+ *    values: ["Bob", "Laster"]
+ *  }
+*/
 
 function sqlForPartialUpdate(dataToUpdate, jsToSql) {
   const keys = Object.keys(dataToUpdate);
@@ -30,3 +55,8 @@ module.exports = { sqlForPartialUpdate };
 //{setCols: "first_name = $1, last_name = $2"
 // values: ["Bob", "Laster", true]
 
+
+function sqlForSearch(dataToSearch, jsToSql) {
+  const keys = Object.keys(dataToSearch);
+  if
+}

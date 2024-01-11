@@ -55,7 +55,7 @@ class Company {
    * Returns [{ handle, name, description, numEmployees, logoUrl }, ...]
    * */
 
-  static async findAll() {
+  static async findAll(data) {
     const companiesRes = await db.query(`
         SELECT handle,
                name,
