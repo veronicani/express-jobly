@@ -55,6 +55,43 @@ class Company {
    * Returns [{ handle, name, description, numEmployees, logoUrl }, ...]
    * */
 
+  /** pseudo query
+   * make 2 separate queries: if data is empty, proceed with normal query
+   * if data is not empty, proceed with formatted WHERE clause
+   *
+   *
+   * SELECT handle, name, description, num_employees AS "numEmployees", logo_url AS "logoUrl"
+   * FROM companies
+   * WHERE name ILIKE $1 AND num_employees > $2 AND num_employees < $3,
+   * [$1, $2, $3] --> ["App", 2, ,200]
+   *
+   *
+   * SELECT handle, name....
+   * FROM companies
+   * WHERE name ILIKE $1
+   *
+   * [$1] --> ["App"]
+   *
+   *
+   * SELECT handle, name...
+   * FROM companies
+   * WHERE num_employees < $1
+   * [$1] --> [200]
+   *
+   *
+   * const basequery = 'SELECT handle,
+               name,
+               description,
+               num_employees AS "numEmployees",
+               logo_url      AS "logoUrl"
+        FROM companies'
+
+    const filterquery = searchForQuery(data);
+
+    if filterquery !== ""
+    ...concatenate basequery + filterquery + order by
+   */
+
   static async findAll(data) {
     const companiesRes = await db.query(`
         SELECT handle,

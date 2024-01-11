@@ -1,6 +1,6 @@
 "use strict";
 
-const { sqlForPartialUpdate } = require("./sql");
+const { sqlForPartialUpdate, sqlForSearch } = require("./sql");
 const { BadRequestError } = require("../expressError");
 
 
@@ -50,4 +50,48 @@ describe("sqlForPartialUpdate", function () {
         lastName: "last_name",
       })).toThrow(BadRequestError);
   });
+});
+
+//// Tests for sqlSearch /////
+
+describe("sqlForSearch", function () {
+  test("works with valid data", function () {
+    const whereClause = sqlForSearch(
+      {
+        "nameLike": "C",
+        "minEmployees": "2"
+      },
+      {
+
+      });
+
+
+    expect(whereClause).toEqual("WHERE name ILIKE '%C%' AND num_employees >= 2");
+  });
+
+
+  test("works with min and max values", function () {
+    const whereClause  = sqlForSearch(
+      {
+        "minEmployees": "2",
+        "maxEmployees": "100",
+      },
+      {
+        nameLike: "name",
+        numEmployees: "num_employees",
+      });
+
+    expect(whereClause).toEqual('WHERE num_employees >= 2 AND num_employees <= 100');
+
+  });
+
+
+  // test("bad request with no data", function () {
+
+  //   expect(() => sqlForPartialUpdate({},
+  //     {
+  //       firstName: "first_name",
+  //       lastName: "last_name",
+  //     })).toThrow(BadRequestError);
+  // });
 });

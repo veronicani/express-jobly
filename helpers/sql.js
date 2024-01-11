@@ -35,7 +35,7 @@ function sqlForPartialUpdate(dataToUpdate, jsToSql) {
 
   // {firstName: 'Aliya', age: 32} => ['"first_name"=$1', '"age"=$2']
   const cols = keys.map((colName, idx) =>
-      `"${jsToSql[colName] || colName}"=$${idx + 1}`,
+    `"${jsToSql[colName] || colName}"=$${idx + 1}`,
   );
 
   return {
@@ -44,7 +44,6 @@ function sqlForPartialUpdate(dataToUpdate, jsToSql) {
   };
 }
 
-module.exports = { sqlForPartialUpdate };
 
 //Walkthrough of sqlForPartialUpdate
 // data {firstName: "Bob", 'lastName: "Laster", 'isAdmin: true}
@@ -58,11 +57,74 @@ module.exports = { sqlForPartialUpdate };
 /**
  *
  *
+ * Receives:
+ *  DataToSearch Example:
+ *     {
+ *       nameLike: "App",
+ *       minEmployees: "2",
+ *       maxEmployees: "10"
+ *    }
  *
- *
+ *  jsToSQL:
+ *     {
+ *      firstName: "first_name",
+ *      lastName: "last_name",
+ *      isAdmin: "is_admin",
+ *    }
  *
  */
-function sqlForSearch(dataToSearch, jsToSql) {
-  const keys = Object.keys(dataToSearch);
-  //TODO: implement?
+
+function sqlForSearch(data, jsToSql) {
+  //check if minEmployees > maxEmployees. If true, throw error
+  if (data.minEmployees && data.maxEmployees) {
+    if (+data.minEmployees > data.maxEmployees) throw new BadRequestError("");
+  }
+
+  const keys = Object.keys(data);
+
+  if (keys.length === 0) {
+    return "";
+  }
+
+  let baseQuery = "WHERE";
+
+  if (keys.includes("nameLike")) {
+    baseQuery += ` name ILIKE '%${data.nameLike}%'`;
+  }
+
+  //TODO: if other keys are included, account for AND such as name
+  //and minEmployees
+  if (keys.includes("minEmployees") && keys.includes("maxEmployees")) {
+    baseQuery += ` num_employees >= ${+data.minEmployees} AND num_employees <= ${+data.maxEmployees}`;
+
+  } else if (keys.includes("minEmployees")) {
+    baseQuery += ` num_employees >= ${+data.minEmployees}`;
+
+  } else if (keys.includes("maxEmployees")) {
+    baseQuery += ` num_employees <= ${+data.maxEmployees}`;
+  }
+
+  console.log("baseQuery is:", baseQuery);
+
+  return baseQuery;
+
 }
+
+module.exports = { sqlForPartialUpdate, sqlForSearch };
+
+
+
+
+
+//baseQuery += " num_employees >= ${data.minEmployees}
+  //              AND  num_employees <= ${data.maxEmployees "
+
+  //else if minEmployees
+  // baseQuery += " num_employees >= ${data.minEmployees}"
+
+  //else if maxEmployees
+  // baseQuery += " num_employees <= ${data.maxEmployees}"
+
+
+
+  //return baseQuery
