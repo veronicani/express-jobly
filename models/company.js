@@ -92,7 +92,32 @@ class Company {
     ...concatenate basequery + filterquery + order by
    */
 
-  static async findAll(data) {
+  static async findAll(query) {
+    function _makeWhereClause(query) {
+      if (data.minEmployees && data.maxEmployees) {
+        if (+data.minEmployees > data.maxEmployees) throw new BadRequestError("");
+      }
+      const { nameLike, minEmployees, maxEmployees } = query;
+      const whereExps = [];
+      const values = [];
+      //if there is a nameLike 
+      if (nameLike) {
+        values.push(nameLike); //['C'] 
+        whereExps.push(`name ILIKE $${values.length}`); // [name ILIKE $1]
+      }
+
+      if (maxEmployees) {
+        values.push(Number(maxEmployees));
+        whereExps.push(`num_employees <= $${values.length}`);
+      }
+      //TODO: implement minEmployees
+      if (maxEmployees) {
+        values.push(maxEmployees);
+        whereExps.push(`num_employees <= $${values.length}`);
+      }
+
+      //return 'WHERE' += whereClause.join('AND');
+    }
     const companiesRes = await db.query(`
         SELECT handle,
                name,
