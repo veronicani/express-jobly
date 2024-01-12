@@ -91,8 +91,13 @@ describe("_makeWhereClause", function () {
     expect(() => Company._makeWhereClause(query)).toThrow(BadRequestError);
   });
 
-  test("bad request with invalid inputs", function () {
+  test("bad request with invalid min employees", function () {
     const query = {"minEmployees": "cat"}
+    expect(() => Company._makeWhereClause(query)).toThrow(BadRequestError);
+  });
+
+  test("bad request with max employees", function () {
+    const query = {"maxEmployees": "cat"}
     expect(() => Company._makeWhereClause(query)).toThrow(BadRequestError);
   });
 });
