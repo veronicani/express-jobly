@@ -108,7 +108,7 @@ describe("POST /users", function () {
         username: "u-new",
       })
       .set("authorization", `Bearer ${u1Token}`);
-    expect(resp.statusCode).toEqual(400);
+    expect(resp.statusCode).toEqual(401);
   });
 
   test("bad request if missing data for admin users", async function () {
@@ -167,6 +167,13 @@ describe("GET /users", function () {
           email: "user3@user.com",
           isAdmin: false,
         },
+        {
+          username: "uA",
+          firstName: "UAF",
+          lastName: "UAL",
+          email: "userA@user.com",
+          isAdmin: true,
+        }
       ],
     });
   });
@@ -354,13 +361,13 @@ describe("PATCH /users/:username", () => {
     expect(resp.statusCode).toEqual(400);
   });
 
-  test("bad request if invalid data for anon", async function () {
+  test("unauth if invalid data for anon", async function () {
     const resp = await request(app)
       .patch(`/users/u1`)
       .send({
         firstName: 42,
       })
-    expect(resp.statusCode).toEqual(400);
+    expect(resp.statusCode).toEqual(401);
   });
 
   test("unauth if invalid data for incorrect user", async function () {
