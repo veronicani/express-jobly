@@ -11,6 +11,7 @@ const {
   commonAfterEach,
   commonAfterAll,
   u1Token,
+  uAToken,
 } = require("./_testCommon");
 
 beforeAll(commonBeforeAll);
@@ -170,7 +171,7 @@ describe("GET /companies", function () {
     const resp = await request(app).get("/companies?minEmployees=3&maxEmployees=2");
     expect(resp.statusCode).toEqual(400);
   });
-  
+
   test("bad request w/ query: minEmployees is not a number", async function () {
     const resp = await request(app).get("/companies?minEmployees=cat");
     expect(resp.statusCode).toEqual(400);
@@ -223,13 +224,13 @@ describe("GET /companies/:handle", function () {
 /************************************** PATCH /companies/:handle */
 
 describe("PATCH /companies/:handle", function () {
-  test("works for users", async function () {
+  test("works for admin users", async function () {
     const resp = await request(app)
       .patch(`/companies/c1`)
       .send({
         name: "C1-new",
       })
-      .set("authorization", `Bearer ${u1Token}`);
+      .set("authorization", `Bearer ${uAToken}`);
     expect(resp.body).toEqual({
       company: {
         handle: "c1",
@@ -249,6 +250,18 @@ describe("PATCH /companies/:handle", function () {
       });
     expect(resp.statusCode).toEqual(401);
   });
+
+
+  test("unauth for non-admin user", async function () {
+    const resp = await request(app)
+      .patch(`/companies/c1`)
+      .send({
+        name: "C1-new",
+      })
+      .set("authorization", `Bearer ${u1Token}`);;
+    expect(resp.statusCode).toEqual(401);
+  });
+
 
   test("not found on no such company", async function () {
     const resp = await request(app)
@@ -280,6 +293,9 @@ describe("PATCH /companies/:handle", function () {
     expect(resp.statusCode).toEqual(400);
   });
 });
+
+
+
 
 /************************************** DELETE /companies/:handle */
 
