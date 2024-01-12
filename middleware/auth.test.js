@@ -6,6 +6,7 @@ const {
   authenticateJWT,
   ensureLoggedIn,
   ensureAdmin,
+  ensureAdminOrCorrectUser
 } = require("./auth");
 
 
@@ -97,31 +98,31 @@ describe("ensureAdmin", function () {
 
 // TODO: import ensureAdminOrCorrectUser after writing it.
 // TODO: implement middleware in routes
-// describe("ensureAdminOrCorrectUser", function () {
-//   test("works for admin", function () {
-//     const req = { params: { username: "testAdmin" } };
-//     const res = { locals: { user: { username: "testAdmin", isAdmin: true } } };
-//     ensureAdminOrCorrectUser(req, res, next);
-//   });
+describe("ensureAdminOrCorrectUser", function () {
+  test("works for admin", function () {
+    const req = { params: { username: "testAdmin" } };
+    const res = { locals: { user: { username: "testAdmin", isAdmin: true } } };
+    ensureAdminOrCorrectUser(req, res, next);
+  });
 
-//   test("works for correctUser", function () {
-//     const req = { params: { username: "test" } };
-//     const res = { locals: { user: { username: "test", isAdmin: false } } };
-//     ensureAdminOrCorrectUser(req, res, next);
-//   });
+  test("works for correctUser", function () {
+    const req = { params: { username: "test" } };
+    const res = { locals: { user: { username: "test", isAdmin: false } } };
+    ensureAdminOrCorrectUser(req, res, next);
+  });
 
-//   test("unauth if non admin user and incorrectUser", function () {
-//     const req = { params: { username: "test" } };
-//     const res = { locals: { user: { username: "test2", isAdmin: false} } };
-//     expect(() => ensureAdminOrCorrectUser(req, res, next))
-//         .toThrow(UnauthorizedError);
-//   });
+  test("unauth if non admin user and incorrectUser", function () {
+    const req = { params: { username: "test" } };
+    const res = { locals: { user: { username: "test2", isAdmin: false} } };
+    expect(() => ensureAdminOrCorrectUser(req, res, next))
+        .toThrow(UnauthorizedError);
+  });
 
-//   test("unauth for anon users", function () {
-//     const req = { params: { username: "test" } };
-//     const res = { locals: {} };
-//     expect(() => ensureAdminOrCorrectUser(req, res, next))
-//         .toThrow(UnauthorizedError);
-//   });
+  test("unauth for anon users", function () {
+    const req = { params: { username: "test" } };
+    const res = { locals: {} };
+    expect(() => ensureAdminOrCorrectUser(req, res, next))
+        .toThrow(UnauthorizedError);
+  });
 
-// });
+});
