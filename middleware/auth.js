@@ -49,7 +49,7 @@ function ensureAdmin(req, res, next) {
   if (res.locals.user?.username && res.locals.user?.isAdmin === true) {
     return next();
   }
-
+  throw new UnauthorizedError();
 }
 
 /** Middleware to use when they must be an admin user or the correct user
