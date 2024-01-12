@@ -96,11 +96,9 @@ describe("ensureAdmin", function () {
 
 });
 
-// TODO: import ensureAdminOrCorrectUser after writing it.
-// TODO: implement middleware in routes
 describe("ensureAdminOrCorrectUser", function () {
   test("works for admin", function () {
-    const req = { params: { username: "testAdmin" } };
+    const req = { params: { username: "test" } };
     const res = { locals: { user: { username: "testAdmin", isAdmin: true } } };
     ensureAdminOrCorrectUser(req, res, next);
   });
