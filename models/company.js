@@ -105,12 +105,12 @@ class Company {
       whereExps.push(`name ILIKE $${values.length}`);
     }
 
-    if (query.minEmployees) { //FIXME: what if minEmps is 0, use 'minEmployees in query' ADD TEST
+    if ("minEmployees" in query) {
       values.push(Number(query.minEmployees));
       whereExps.push(`num_employees >= $${values.length}`);
     }
 
-    if (query.maxEmployees) {
+    if ("maxEmployees" in query) {
       values.push(Number(query.maxEmployees));
       whereExps.push(`num_employees <= $${values.length}`);
     }
