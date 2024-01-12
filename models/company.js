@@ -105,7 +105,7 @@ class Company {
       whereExps.push(`name ILIKE $${values.length}`);
     }
 
-    if (query.minEmployees) {
+    if (query.minEmployees) { //FIXME: what if minEmps is 0, use 'minEmployees in query' ADD TEST
       values.push(Number(query.minEmployees));
       whereExps.push(`num_employees >= $${values.length}`);
     }
@@ -115,7 +115,7 @@ class Company {
       whereExps.push(`num_employees <= $${values.length}`);
     }
 
-    if (whereExps.length === 0) {
+    if (whereExps.length === 0) { //TODO: don't need this anymore
       return "";
     }
 
@@ -155,8 +155,8 @@ class Company {
         ${whereClause}
         ORDER BY name`;
 
-    const companiesRes = await db.query(baseQuery, values);
-    if (companiesRes.rows.length === 0) throw new NotFoundError("Company not found");
+    const companiesRes = await db.query(baseQuery, values); //TODO: if no query, values will be ignored b/c no $vars
+    if (companiesRes.rows.length === 0) throw new NotFoundError("Company not found"); //TODO: no 404: in route, this will be falsy; can return string
 
     return companiesRes.rows;
 

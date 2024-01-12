@@ -98,6 +98,7 @@ describe("GET /companies", function () {
 
   test("works with query: nameLike", async function () {
     const resp = await request(app).get("/companies?nameLike=c");
+    //TODO: can chain on .query ({nameLike: "c"})
     expect(resp.body).toEqual({
       companies:
         [

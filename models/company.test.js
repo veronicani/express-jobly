@@ -100,6 +100,8 @@ describe("_makeWhereClause", function () {
     const query = {"maxEmployees": "cat"}
     expect(() => Company._makeWhereClause(query)).toThrow(BadRequestError);
   });
+
+  //TODO: what if there are more keys than expected - e.g. netVal? test for this
 });
 
 /************************************** findAll */

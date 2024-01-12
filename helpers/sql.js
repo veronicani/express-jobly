@@ -5,7 +5,7 @@ const { BadRequestError } = require("../expressError");
 /** Takes in user input data which is an object, and formats data
  * to be used in an UPDATE parameterized SQL query that partially updates
  * a record in the database.
- *
+ * //TODO: describe dataToUpdate object
  * jsToSql object is passed as a second argument: it maps javascript variable
  * names from dataToUpdate to their SQL column names.
  *
@@ -16,14 +16,14 @@ const { BadRequestError } = require("../expressError");
  *  dataToUpdate Example:
  *     {
  *       firstName: "Bob",
- *       lastName: "Laster"
+ *       lastName: "Laster",
  *    }
  *
  *  jsToSql:
  *     {
  *      firstName: "first_name",
  *      lastName: "last_name",
- *      isAdmin: "is_admin",
+ *      isAdmin: "is_admin"
  *    }
  *
  *
@@ -40,7 +40,7 @@ function sqlForPartialUpdate(dataToUpdate, jsToSql) {
 
   // {firstName: 'Aliya', age: 32} => ['"first_name"=$1', '"age"=$2']
   const cols = keys.map((colName, idx) =>
-    `"${jsToSql[colName] || colName}"=$${idx + 1}`,
+    `"${jsToSql[colName] || colName}"=$${idx + 1}`, // TODO: add comment about what this line does
   );
 
   return {
