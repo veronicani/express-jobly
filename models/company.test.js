@@ -86,6 +86,14 @@ describe("_makeWhereClause", function () {
 
   });
 
+  test("works if max employees is 0", function (){
+    const query = {"maxEmployees": "0"};
+    const { whereClause, values } = Company._makeWhereClause(query);
+
+    expect(whereClause).toEqual("WHERE num_employees <= $1");
+    expect(values).toEqual([0]);
+  })
+
   test("bad request with minEmployees greater than maxEmployees", function () {
     const query = {"minEmployees": "100", "maxEmployees": "2"}
     expect(() => Company._makeWhereClause(query)).toThrow(BadRequestError);
@@ -100,6 +108,7 @@ describe("_makeWhereClause", function () {
     const query = {"maxEmployees": "cat"}
     expect(() => Company._makeWhereClause(query)).toThrow(BadRequestError);
   });
+
 
   //TODO: what if there are more keys than expected - e.g. netVal? test for this
 });
