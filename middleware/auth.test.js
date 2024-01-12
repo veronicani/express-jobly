@@ -5,12 +5,14 @@ const { UnauthorizedError } = require("../expressError");
 const {
   authenticateJWT,
   ensureLoggedIn,
+  ensureAdmin,
 } = require("./auth");
 
 
 const { SECRET_KEY } = require("../config");
 const testJwt = jwt.sign({ username: "test", isAdmin: false }, SECRET_KEY);
 const badJwt = jwt.sign({ username: "test", isAdmin: false }, "wrong");
+
 
 function next(err) {
   if (err) throw new Error("Got error from middleware");
@@ -67,4 +69,28 @@ describe("ensureLoggedIn", function () {
     expect(() => ensureLoggedIn(req, res, next))
         .toThrow(UnauthorizedError);
   });
+});
+
+
+describe("ensureAdmin", function () {
+  test("works", function () {
+    const req = {};
+    const res = { locals: { user: { username: "testAdmin", isAdmin: true } } };
+    ensureAdmin(req, res, next);
+  });
+
+  test("unauth if isAdmin is false", function () {
+    const req = {};
+    const res = { locals: { user: { username: "test", isAdmin: false } } };
+    expect(() => ensureAdmin(req, res, next))
+        .toThrow(UnauthorizedError);
+  });
+
+  test("unauth if no valid login", function () {
+    const req = {};
+    const res = { locals: { user: { } } };
+    expect(() => ensureAdmin(req, res, next))
+        .toThrow(UnauthorizedError);
+  });
+
 });
