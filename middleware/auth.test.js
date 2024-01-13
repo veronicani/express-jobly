@@ -19,6 +19,7 @@ function next(err) {
   if (err) throw new Error("Got error from middleware");
 }
 
+/************************************** authenticateJWT */
 
 describe("authenticateJWT", function () {
   test("works: via header", function () {
@@ -49,6 +50,7 @@ describe("authenticateJWT", function () {
   });
 });
 
+/************************************** ensureLoggedIn */
 
 describe("ensureLoggedIn", function () {
   test("works", function () {
@@ -72,6 +74,7 @@ describe("ensureLoggedIn", function () {
   });
 });
 
+/************************************** ensureAdmin */
 
 describe("ensureAdmin", function () {
   test("works", function () {
@@ -96,6 +99,8 @@ describe("ensureAdmin", function () {
 
 });
 
+/************************************** ensureAdminOrCorrectUser */
+
 describe("ensureAdminOrCorrectUser", function () {
   test("works for admin", function () {
     const req = { params: { username: "test" } };
@@ -103,13 +108,13 @@ describe("ensureAdminOrCorrectUser", function () {
     ensureAdminOrCorrectUser(req, res, next);
   });
 
-  test("works for correctUser", function () {
+  test("works for correct user", function () {
     const req = { params: { username: "test" } };
     const res = { locals: { user: { username: "test", isAdmin: false } } };
     ensureAdminOrCorrectUser(req, res, next);
   });
 
-  test("unauth if non admin user and incorrectUser", function () {
+  test("unauth if non admin user and incorrect user", function () {
     const req = { params: { username: "test" } };
     const res = { locals: { user: { username: "test2", isAdmin: false} } };
     expect(() => ensureAdminOrCorrectUser(req, res, next))

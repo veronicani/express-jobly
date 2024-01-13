@@ -55,7 +55,7 @@ function ensureAdmin(req, res, next) {
 /** Middleware to use when they must be an admin user or the correct user
  *
  *
- * If not, raises Unauthorized
+ * If not, raises Unauthorized.
  */
 
 function ensureAdminOrCorrectUser(req, res, next){

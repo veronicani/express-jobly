@@ -111,6 +111,8 @@ describe("POST /users", function () {
     expect(resp.statusCode).toEqual(401);
   });
 
+  //NOTE: should we also test unauth for missing data by non-admin?
+
   test("bad request if missing data for admin users", async function () {
     const resp = await request(app)
       .post("/users")
@@ -244,7 +246,7 @@ describe("GET /users/:username", function () {
     expect(resp.statusCode).toEqual(401);
   });
 
-  test("unauth for incorrect user and if :/username does not exist", async function () {
+  test("unauth if user not found for incorrect user", async function () {
     const resp = await request(app)
       .get(`/users/nope`)
       .set("authorization", `Bearer ${u1Token}`);
@@ -281,7 +283,7 @@ describe("PATCH /users/:username", () => {
     });
   });
 
-  test("works: set new password for correct user", async function () {
+  test("works: set new password, for correct user", async function () {
     const resp = await request(app)
       .patch(`/users/u1`)
       .send({
@@ -320,7 +322,7 @@ describe("PATCH /users/:username", () => {
     expect(resp.statusCode).toEqual(401);
   });
 
-  test("unauth for incorrect user and if :/username does not exist",
+  test("unauth if user not found for incorrect user",
     async function () {
       const resp = await request(app)
         .patch(`/users/nope`)
@@ -411,14 +413,14 @@ describe("DELETE /users/:username", function () {
     expect(resp.statusCode).toEqual(401);
   });
 
-  test("unauth if user missing for incorrect user", async function () {
+  test("unauth if user not found for incorrect user", async function () {
     const resp = await request(app)
       .delete(`/users/nope`)
       .set("authorization", `Bearer ${u1Token}`);
     expect(resp.statusCode).toEqual(401);
   });
 
-  test("not found if user missing for admin user", async function () {
+  test("user not found for admin user", async function () {
     const resp = await request(app)
       .delete(`/users/nope`)
       .set("authorization", `Bearer ${uAToken}`);
