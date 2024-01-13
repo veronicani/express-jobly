@@ -111,7 +111,8 @@ describe("POST /users", function () {
     expect(resp.statusCode).toEqual(401);
   });
 
-  //NOTE: should we also test unauth for missing data by non-admin?
+  //TODO: unauth for invalid data by non-admin
+  //TODO: should we also test unauth for missing data by anon?
 
   test("bad request if missing data for admin users", async function () {
     const resp = await request(app)
@@ -253,7 +254,7 @@ describe("GET /users/:username", function () {
     expect(resp.statusCode).toEqual(401);
   });
 
-  test("bad request if user not found for admin user", async function () {
+  test("user not found for admin user", async function () {
     const resp = await request(app)
       .get(`/users/nope`)
       .set("authorization", `Bearer ${uAToken}`);
@@ -381,6 +382,9 @@ describe("PATCH /users/:username", () => {
       .set("authorization", `Bearer ${u2Token}`);
     expect(resp.statusCode).toEqual(401);
   });
+
+  //TODO: missing data tests for admin, correct, not correct, anon
+  //TODO: test if non-admin, correct, and anon user try to change isAdmin
 });
 
 /************************************** DELETE /users/:username */

@@ -96,7 +96,7 @@ describe("ensureAdmin", function () {
     expect(() => ensureAdmin(req, res, next))
         .toThrow(UnauthorizedError);
   });
-
+  //TODO: test for isAdmin: 'true' instead of true 
 });
 
 /************************************** ensureAdminOrCorrectUser */
@@ -107,7 +107,7 @@ describe("ensureAdminOrCorrectUser", function () {
     const res = { locals: { user: { username: "testAdmin", isAdmin: true } } };
     ensureAdminOrCorrectUser(req, res, next);
   });
-
+  //TODO: test for isAdmin: 'true' instead of true 
   test("works for correct user", function () {
     const req = { params: { username: "test" } };
     const res = { locals: { user: { username: "test", isAdmin: false } } };

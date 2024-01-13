@@ -66,7 +66,7 @@ describe("POST /companies", function () {
       .set("authorization", `Bearer ${u1Token}`);
     expect(resp.statusCode).toEqual(401);
   });
-
+  //TODO: unauth w/ invalid data for non-admin users
   test("bad request with missing data for admin users", async function () {
     const resp = await request(app)
       .post("/companies")
@@ -298,7 +298,7 @@ describe("PATCH /companies/:handle", function () {
     expect(resp.statusCode).toEqual(401);
   });
 
-  test("unauth on handle change attempt for non-admin users", async function () {
+  test("unauth on 'handle' change attempt for non-admin users", async function () {
     const resp = await request(app)
       .patch(`/companies/c1`)
       .send({
@@ -307,7 +307,7 @@ describe("PATCH /companies/:handle", function () {
       .set("authorization", `Bearer ${u1Token}`);
     expect(resp.statusCode).toEqual(401);
   });
-
+  //TODO: unauth for hande chng for anon
   test("unauth on invalid data for non-admin users", async function () {
     const resp = await request(app)
       .patch(`/companies/c1`)
@@ -348,7 +348,7 @@ describe("PATCH /companies/:handle", function () {
     expect(resp.statusCode).toEqual(400);
   });
 });
-
+//NOTE: works: match by verb --- not work
 
 /************************************** DELETE /companies/:handle */
 
